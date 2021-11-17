@@ -1,0 +1,23 @@
+{
+  "name": "question-answer",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "jest",
+    "start": "nodemon server/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GaladrielSDC/Question-Answer.git"
+  },
+  "author": "April Granzow",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GaladrielSDC/Question-Answer/issues"
+  },
+  "homepage": "https://github.com/GaladrielSDC/Question-Answer#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
