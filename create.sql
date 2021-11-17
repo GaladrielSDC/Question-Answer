@@ -43,3 +43,11 @@ ALTER COLUMN
   date_written
 SET
   DATA TYPE timestamp with time zone USING timestamp with time zone 'epoch' + date_written * interval '1 millisecond';
+
+CREATE TABLE answers_photos (
+  id SERIAL UNIQUE PRIMARY KEY,
+  answer_id INTEGER references answers(id),
+  url text
+);
+
+COPY answers_photos FROM 'answers_photos.csv' DELIMITER ',' CSV HEADER;
