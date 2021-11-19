@@ -2,7 +2,6 @@ const express = require('express');
 const db = require('../db');
 const router = express.Router();
 
-
 router.get('/qa/questions', (req, res) => {
   const { product_id } = req.query;
   const page = req.query.page === undefined ? 1 : req.query.page;

@@ -2,10 +2,14 @@
 const express = require('express');
 const db = require('./db');
 const app = express();
+const questions = require('./routes/questions');
+const answers = require('./routes/answers');
 const port = 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use('/', questions);
+app.use('/', answers);
 
 app.get('/qa', (req, res) => {
   res.send('Hello World');
