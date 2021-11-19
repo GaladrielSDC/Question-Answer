@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 const express = require('express');
-const db = require('./db');
 const app = express();
 const questions = require('./routes/questions');
 const answers = require('./routes/answers');
