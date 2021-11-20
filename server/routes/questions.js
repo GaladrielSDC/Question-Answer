@@ -17,11 +17,22 @@ router.get('/qa/questions', (req, res) => {
   });
 });
 
+router.post('/qa/questions', (req, res) => {
+  const {
+    product_id, body, name, email,
+  } = req.body;
+  questionController.insert(product_id, body, name, email)
+    .then((result) => res.status(201).json(result));
+});
+
 router.put('/qa/questions/:question_id/helpful', (req, res) => {
   const { question_id } = req.params;
   questionController.markHelpful(question_id).then(
     () => { res.status(204).end(); },
-  );
+  ).catch((error) => {
+    console.error(error.stack);
+    res.status(500).send(error);
+  });
 });
 
 router.put('/qa/questions/:question_id/report', (req, res) => {

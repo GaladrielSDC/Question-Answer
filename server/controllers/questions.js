@@ -65,7 +65,7 @@ const report = (questionId) => (
 // POST REQUESTS
 const insertQueryText = `
 INSERT INTO questions (product_id, body, asker, email)
-VALUES ($1, $2, $3, $4)
+VALUES ($1, $2, $3, $4);
 `;
 
 const insert = (productId, body, name, email) => (

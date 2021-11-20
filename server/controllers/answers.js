@@ -1,4 +1,5 @@
 const db = require('../db');
+const photosController = require('./photos');
 
 const getAnswerQueryText = `
 SELECT id AS answer_id, body, date_written AS date, answerer AS answerer_name, helpful AS helpfulness
@@ -8,8 +9,6 @@ FROM answers
   LIMIT $2
   OFFSET $3
 `;
-
-const getPhotosQueryText = 'SELECT id, url FROM answers_photos WHERE answer_id = $1';
 
 const getAnswers = (questionId, page, count, offset) => (
   db.query(getAnswerQueryText, [questionId, count, offset]).then(
