@@ -62,6 +62,17 @@ const report = (questionId) => (
   db.query(reportQueryText, [questionId])
 );
 
+// POST REQUESTS
+const insertQueryText = `
+INSERT INTO questions (product_id, body, asker, email)
+VALUES ($1, $2, $3, $4)
+`;
+
+const insert = (productId, body, name, email) => (
+  db.query(insertQueryText, [productId, body, name, email])
+);
+
 module.exports.getQuestions = getQuestions;
 module.exports.markHelpful = markHelpful;
 module.exports.report = report;
+module.exports.insert = insert;
