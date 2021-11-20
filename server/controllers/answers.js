@@ -1,10 +1,35 @@
 const db = require('../db');
 
 const getAnswerQueryText = `
-
+SELECT id AS answer_id, body, date_written AS date, answerer AS answerer_name, helpful AS helpfulness
+FROM answers
+  WHERE question_id = $1
+  AND reported IS FALSE
+  LIMIT $2
+  OFFSET $3
 `;
 
-const getAnswers = () => {};
+const getPhotosQueryText = 'SELECT id, url FROM answers_photos WHERE answer_id = $1';
+
+const getAnswers = (questionId, page, count, offset) => (
+  db.query(getAnswerQueryText, [questionId, count, offset]).then(
+    (answerResults) => (
+      // const answerIds = answerResult.rows.map((row) => row.answer_id);
+      // const promises = answerIds.map((id) => db.query(photosQuery, [id]));
+      // Promise.all(promises)
+      //   .then((values) => res.json(
+      //     answerResult.rows,
+      //   ));
+      {
+        question: questionId,
+        page,
+        count,
+        results: answerResults.rows,
+      }
+    ),
+  )
+    .catch((e) => console.error(e.stack))
+);
 
 const markHelpfulQueryText = `
 UPDATE answers
