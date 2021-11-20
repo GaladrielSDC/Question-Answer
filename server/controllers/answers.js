@@ -30,6 +30,21 @@ const getAnswers = (questionId, page, count, offset) => (
     .catch((e) => console.error(e.stack))
 );
 
+const insertQueryText = `
+INSERT INTO answers(question_id, body, answerer, email)
+VALUES($1, $2, $3, $4)
+RETURNING id;
+`;
+
+const insert = (questionId, body, name, email, photos) => (
+  // insert answer
+  db.query(insertQueryText, [questionId, body, name, email])
+    .then((result) => {
+      const answerId = result.rows[0].id;
+      return photos.map((url) => photosController.insertPhoto(answerId, url));
+    })
+);
+
 const markHelpfulQueryText = `
 UPDATE answers
 SET helpful = helpful + 1
@@ -53,3 +68,4 @@ const report = (answerId) => (
 module.exports.getAnswers = getAnswers;
 module.exports.markHelpful = markHelpful;
 module.exports.report = report;
+module.exports.insert = insert;

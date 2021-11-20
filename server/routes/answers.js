@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 const express = require('express');
-const db = require('../db');
 const answersController = require('../controllers/answers');
 const router = express.Router();
 
@@ -11,6 +10,22 @@ router.get('/qa/questions/:question_id/answers', (req, res) => {
   const offset = (page - 1) * count;
   answersController.getAnswers(question_id, page, count, offset).then((result) => {
     res.json(result);
+  });
+});
+
+router.post('/qa/questions/:question_id/answers', (req, res) => {
+  const { question_id } = req.params;
+  const {
+    body,
+    name,
+    email,
+    photos,
+  } = req.body;
+  answersController.insert(question_id, body, name, email, photos).then(() => {
+    res.status(201).end();
+  }).catch((error) => {
+    console.error(error);
+    res.status(500).end();
   });
 });
 

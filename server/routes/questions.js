@@ -22,7 +22,7 @@ router.post('/qa/questions', (req, res) => {
     product_id, body, name, email,
   } = req.body;
   questionController.insert(product_id, body, name, email)
-    .then((result) => res.status(201).json(result));
+    .then(() => res.status(201).json());
 });
 
 router.put('/qa/questions/:question_id/helpful', (req, res) => {
