@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const express = require('express');
 const db = require('../db');
 const answersController = require('../controllers/answers');
@@ -33,6 +34,16 @@ router.get('/qa/questions/:question_id/answers', (req, res) => {
 router.put('/qa/answers/:answer_id/helpful', (req, res) => {
   const { answer_id } = req.params;
   answersController.markHelpful(answer_id).then(() => {
+    res.status(204).end();
+  }).catch((error) => {
+    console.error(error.stack);
+    res.status(500).end();
+  });
+});
+
+router.put('/qa/answers/:answer_id/report', (req, res) => {
+  const { answer_id } = req.params;
+  answersController.report(answer_id).then(() => {
     res.status(204).end();
   }).catch((error) => {
     console.error(error.stack);
