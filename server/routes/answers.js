@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('../db');
+const answersController = require('../controllers/answers');
 const router = express.Router();
 
 router.get('/qa/questions/:question_id/answers', (req, res) => {
@@ -22,11 +23,21 @@ router.get('/qa/questions/:question_id/answers', (req, res) => {
       const promises = answerIds.map((id) => db.query(photosQuery, [id]));
       Promise.all(promises)
         .then((values) => res.json(
-          values.map((result) => result.rows),
+          answerResult.rows,
         ));
     },
   )
     .catch((e) => console.error(e.stack));
+});
+
+router.put('/qa/answers/:answer_id/helpful', (req, res) => {
+  const { answer_id } = req.params;
+  answersController.markHelpful(answer_id).then(() => {
+    res.status(204).end();
+  }).catch((error) => {
+    console.error(error.stack);
+    res.status(500).end();
+  });
 });
 
 module.exports = router;
