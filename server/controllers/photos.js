@@ -9,4 +9,12 @@ WHERE answer_id = $1
 
 const getPhotos = (answerId) => (db.query(getPhotosQueryText, [answerId]));
 
+const insertPhotoQueryText = `
+INSERT INTO answers_photos (answer_id, url)
+VALUES ($1, $2);
+`;
+
+const insertPhoto = (answerId, url) => (db.query(insertPhotoQueryText, [answerId, url]));
+
 module.exports.getPhotos = getPhotos;
+module.exports.insertPhoto = insertPhoto;
