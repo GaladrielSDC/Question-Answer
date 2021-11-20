@@ -1,6 +1,6 @@
 const db = require('../db');
 
-const questionQueryText = `
+const getQuestionsQueryText = `
 SELECT id AS question_id,
   body AS question_body,
   date_written AS question_date,
@@ -12,7 +12,7 @@ WHERE reported IS FALSE
 LIMIT $2 OFFSET $3;
 `;
 
-const answerQueryText = `
+const getAnswersQueryText = `
 SELECT id,
   body,
   date_written AS date,
@@ -23,7 +23,7 @@ WHERE reported IS FALSE
   AND question_id = $1;
 `;
 
-const photoQueryText = `
+const getPhotosQueryText = `
 SELECT id,
   url
 FROM answers_photos
@@ -33,10 +33,10 @@ WHERE answer_id = $1;
 const getQuestions = (productId, page, count) => {
   // get all rows from questions table
   const offset = (page - 1) * count;
-  return db.query(questionQueryText, [productId, count, offset])
+  return db.query(getQuestionsQueryText, [productId, count, offset])
     .then((questionsResults) => {
       const answersPromises = Promise.all(questionsResults.rows.map((row) => (
-        db.query(answerQueryText, [row.id])
+        db.query(getAnswersQueryText, [row.id])
       )));
       return {
         product_id: productId,
@@ -47,4 +47,16 @@ const getQuestions = (productId, page, count) => {
   // run a query for each of these rows
 };
 
+const markHelpfulQueryText = `
+UPDATE questions
+SET helpful = helpful + 1
+WHERE id = $1;
+`;
+
+const markQuestionHelpful = (questionId) => (
+  // return a promise and let the router resolve it
+  db.query(markHelpfulQueryText, [questionId])
+);
+
 module.exports.getQuestions = getQuestions;
+module.exports.markHelpful = markQuestionHelpful;
