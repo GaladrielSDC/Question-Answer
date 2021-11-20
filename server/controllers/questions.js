@@ -1,4 +1,5 @@
 const db = require('../db');
+const photosController = require('./photos');
 
 const getQuestionsQueryText = `
 SELECT id AS question_id,
@@ -21,13 +22,6 @@ SELECT id,
 FROM answers
 WHERE reported IS FALSE
   AND question_id = $1;
-`;
-
-const getPhotosQueryText = `
-SELECT id,
-  url
-FROM answers_photos
-WHERE answer_id = $1;
 `;
 
 const getQuestions = (productId, page, count) => {
@@ -53,10 +47,21 @@ SET helpful = helpful + 1
 WHERE id = $1;
 `;
 
-const markQuestionHelpful = (questionId) => (
+const markHelpful = (questionId) => (
   // return a promise and let the router resolve it
   db.query(markHelpfulQueryText, [questionId])
 );
 
+const reportQueryText = `
+UPDATE questions
+SET reported = TRUE
+WHERE id = $1;
+`;
+
+const report = (questionId) => (
+  db.query(reportQueryText, [questionId])
+);
+
 module.exports.getQuestions = getQuestions;
-module.exports.markHelpful = markQuestionHelpful;
+module.exports.markHelpful = markHelpful;
+module.exports.report = report;
