@@ -31,18 +31,11 @@ const getAnswers = (questionId) => (
   db.query(getAnswersQueryText, [questionId])
 );
 
-const getAnswersForEachQuestion = (rows) => (
-  Promise.all(
-    rows.map((row) => (getAnswers(row.question_id))),
-  )
-);
-
 const getPhotos = (answerId) => (
   db.query(photosController.getPhotosQueryText, [answerId]).then((result) => (result.rows))
 );
 
 const getQuestions = (productId, page, count) => {
-  // get all rows from questions table
   const offset = (page - 1) * count;
   const output = { product_id: productId, results: null };
   return db.query(getQuestionsQueryText, [productId, count, offset])
@@ -73,9 +66,7 @@ const getQuestions = (productId, page, count) => {
       });
       return Promise.all(photosPromises);
     }).then(() => (output))
-    // .then((photosResults) => (photosResults.rows))))
     .catch((e) => console.error(e.stack));
-  // run a query for each of these rows
 };
 
 const markHelpfulQueryText = `
