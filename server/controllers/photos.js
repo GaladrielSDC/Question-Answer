@@ -2,7 +2,8 @@ const db = require('../db');
 
 const getPhotosQueryText = `
 SELECT id,
-  url
+  url,
+  answer_id
 FROM answers_photos
 WHERE answer_id = $1
 `;
@@ -17,4 +18,5 @@ VALUES ($1, $2);
 const insertPhoto = (answerId, url) => (db.query(insertPhotoQueryText, [answerId, url]));
 
 module.exports.getPhotos = getPhotos;
+module.exports.getPhotosQueryText = getPhotosQueryText;
 module.exports.insertPhoto = insertPhoto;

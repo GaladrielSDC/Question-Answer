@@ -6,7 +6,8 @@ SELECT id AS question_id,
   body AS question_body,
   date_written AS question_date,
   asker AS asker_name,
-  helpful AS question_helpfulness
+  helpful AS question_helpfulness,
+  reported
   FROM questions
 WHERE reported IS FALSE
   AND product_id = $1
@@ -18,25 +19,57 @@ SELECT id,
   body,
   date_written AS date,
   answerer AS answerer_name,
-  helpful AS helpfulness
+  helpful AS helpfulness,
+  question_id
 FROM answers
 WHERE reported IS FALSE
   AND question_id = $1;
 `;
 
+const getAnswers = (questionId) => (
+  db.query(getAnswersQueryText, [questionId])
+);
+
+const getAnswersForEachQuestion = (rows) => (
+  Promise.all(
+    rows.map((row) => (getAnswers(row.question_id))),
+  )
+);
+
+const getPhotos = (answerId) => (
+  db.query(photosController.getPhotosQueryText, [answerId]).then((result) => (result.rows))
+);
+
 const getQuestions = (productId, page, count) => {
   // get all rows from questions table
   const offset = (page - 1) * count;
+  const output = { product_id: productId, results: null };
   return db.query(getQuestionsQueryText, [productId, count, offset])
     .then((questionsResults) => {
-      const answersPromises = Promise.all(questionsResults.rows.map((row) => (
-        db.query(getAnswersQueryText, [row.id])
-      )));
-      return {
-        product_id: productId,
-        results: questionsResults.rows,
-      };
+      output.results = questionsResults.rows;
+      const promises = [];
+      output.results.forEach((questionResult) => {
+        promises.push(getAnswers(questionResult.question_id)
+          .then((answersResults) => {
+            const answers = Object.fromEntries(
+              answersResults.rows.map((row) => ([row.id, row])),
+            );
+            // const answers = answersResultsRows.map((row))
+            // eslint-disable-next-line no-param-reassign
+            questionResult.answers = answers;
+          }));
+      });
+      return Promise.all(promises);
     })
+    .then(() => {
+      // const photosPromises = [];
+      // answersResultsRows.forEach((rowsList) => {
+      //   rowsList.forEach((row) => {
+      //     photosPromises.push(getPhotos(row.id));
+      //   });
+      // });
+    }).then(() => (output))
+    // .then((photosResults) => (photosResults.rows))))
     .catch((e) => console.error(e.stack));
   // run a query for each of these rows
 };
@@ -76,3 +109,4 @@ module.exports.getQuestions = getQuestions;
 module.exports.markHelpful = markHelpful;
 module.exports.report = report;
 module.exports.insert = insert;
+module.exports.getPhotos = getPhotos;
