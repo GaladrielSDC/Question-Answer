@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const db = require('../db');
 const photosController = require('./photos');
 
@@ -54,20 +55,23 @@ const getQuestions = (productId, page, count) => {
             const answers = Object.fromEntries(
               answersResults.rows.map((row) => ([row.id, row])),
             );
-            // const answers = answersResultsRows.map((row))
-            // eslint-disable-next-line no-param-reassign
             questionResult.answers = answers;
           }));
       });
       return Promise.all(promises);
     })
     .then(() => {
-      // const photosPromises = [];
-      // answersResultsRows.forEach((rowsList) => {
-      //   rowsList.forEach((row) => {
-      //     photosPromises.push(getPhotos(row.id));
-      //   });
-      // });
+      const { results } = output;
+      const photosPromises = [];
+      results.forEach((question) => {
+        Object.keys(question.answers).forEach((id) => {
+          photosPromises.push(getPhotos(id)
+            .then((photosResults) => {
+              question.answers[id].photos = photosResults;
+            }));
+        });
+      });
+      return Promise.all(photosPromises);
     }).then(() => (output))
     // .then((photosResults) => (photosResults.rows))))
     .catch((e) => console.error(e.stack));

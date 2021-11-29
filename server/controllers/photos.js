@@ -2,8 +2,7 @@ const db = require('../db');
 
 const getPhotosQueryText = `
 SELECT id,
-  url,
-  answer_id
+  url
 FROM answers_photos
 WHERE answer_id = $1
 `;
