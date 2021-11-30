@@ -19,11 +19,15 @@
   "homepage": "https://github.com/GaladrielSDC/Question-Answer#readme",
   "dependencies": {
     "express": "^4.17.1",
+    "json-query": "^2.2.2",
     "pg": "^8.7.1"
   },
   "devDependencies": {
     "eslint": "^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.3"
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^25.3.0",
+    "jest": "^27.4.0",
+    "pactum": "^3.1.0"
   }
 }
