@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const db = require('../db');
 const photosController = require('./photos');
 
@@ -10,25 +11,32 @@ FROM answers
   OFFSET $3
 `;
 
-const getAnswers = (questionId, page, count, offset) => (
-  db.query(getAnswerQueryText, [questionId, count, offset]).then(
-    (answerResults) => (
-      // const answerIds = answerResult.rows.map((row) => row.answer_id);
-      // const promises = answerIds.map((id) => db.query(photosQuery, [id]));
-      // Promise.all(promises)
-      //   .then((values) => res.json(
-      //     answerResult.rows,
-      //   ));
-      {
-        question: questionId,
-        page,
-        count,
-        results: answerResults.rows,
-      }
-    ),
-  )
-    .catch((e) => console.error(e.stack))
+const getAnswersQuery = (questionId, count, offset) => (
+  db.query(getAnswerQueryText, [questionId, count, offset])
 );
+
+const getAnswers = (questionId, page, count, offset) => {
+  const output = {
+    question: questionId,
+    page,
+    count,
+    results: null,
+  };
+  return getAnswersQuery(questionId, count, offset).then(
+    (answersResults) => {
+      output.results = answersResults.rows;
+      const promises = [];
+      output.results.forEach((answerResult) => {
+        promises.push(photosController.getPhotos(answerResult.answer_id)
+          .then((photosResults) => {
+            answerResult.photos = photosResults.rows;
+          }));
+      });
+      return Promise.all(promises);
+    },
+  ).then(() => output)
+    .catch((e) => console.error(e.stack));
+};
 
 const insertQueryText = `
 INSERT INTO answers(question_id, body, answerer, email)
