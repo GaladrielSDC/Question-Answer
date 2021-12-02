@@ -108,3 +108,7 @@ dist
 
 # Loader.io
 loaderIO/
+
+# Postgres password
+connectionURL.js
+config.js

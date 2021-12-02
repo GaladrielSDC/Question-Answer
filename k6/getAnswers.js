@@ -1,3 +1,5 @@
+/* eslint-disable import/extensions */
+/* eslint-disable import/no-unresolved */
 import { URL } from 'https://jslib.k6.io/url/1.0.0/index.js';
 import http from 'k6/http';
 import { sleep } from 'k6';
